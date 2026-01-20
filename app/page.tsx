@@ -1,64 +1,135 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from 'react';
+import { COMPONENT_MAP } from '@/components/componentMap';
+import { generateHtml } from '@/utils/generateHtml';
+import { Loader2, Download, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
+import { Skeleton } from '@/components/Skeleton';
 
 export default function Home() {
+  const [prompt, setPrompt] = useState('');
+  const [layout, setLayout] = useState<any[]>([]);
+  const [theme, setTheme] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!prompt) {
+      toast.error("Please describe your website first!");
+      return;
+    }
+    
+    setLoading(true);
+    setLayout([]); 
+    setTheme(null);
+    
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+      
+      const data = await res.json();
+      
+      if (data.error) throw new Error(data.error);
+      
+      if (data.theme) setTheme(data.theme);
+      if (data.layout) setLayout(data.layout);
+      
+      toast.success("Website generated successfully!");
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExport = () => {
+    if (layout.length === 0) return;
+    const html = generateHtml(layout, theme);
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ai-website.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast.success("Downloaded HTML file");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gray-50 text-black flex flex-col font-sans">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm px-6 py-4">
+        <div className="max-w-5xl mx-auto flex gap-4 items-center flex-wrap">
+          <div className="flex items-center gap-2 mr-4">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Sparkles className="text-white w-5 h-5" />
+            </div>
+            <span className="font-bold text-lg tracking-tight hidden sm:block">AI Builder</span>
+          </div>
+
+          <input
+            type="text"
+            placeholder="E.g., 'A cyberpunk crypto landing page'"
+            className="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
+          />
+          
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 disabled:opacity-70"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {loading ? <Loader2 className="animate-spin w-4 h-4" /> : "Generate"}
+          </button>
+          
+          <button
+            onClick={handleExport}
+            disabled={layout.length === 0 || loading}
+            className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 px-4 py-2.5 rounded-lg font-medium flex items-center gap-2 disabled:opacity-50"
           >
-            Documentation
-          </a>
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Export</span>
+          </button>
         </div>
+      </header>
+
+      <main className="flex-grow p-4 md:p-8">
+        {loading ? (
+          <Skeleton />
+        ) : layout.length === 0 ? (
+          <div className="h-[60vh] flex flex-col items-center justify-center text-gray-400 space-y-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+              <Sparkles className="w-8 h-8 text-gray-300" />
+            </div>
+            <p className="text-lg font-medium">Ready to build something amazing?</p>
+          </div>
+        ) : (
+          <div 
+            className="max-w-7xl mx-auto shadow-2xl rounded-xl overflow-hidden animate-in fade-in duration-500 min-h-[80vh]"
+            style={{ 
+              backgroundColor: theme?.background || '#ffffff', 
+              color: theme?.text || '#000000' 
+            }}
+          >
+            {layout.map((block, index) => {
+              const Component = COMPONENT_MAP[block.type];
+              if (!Component) return null;
+              return (
+                <Component 
+                  key={index} 
+                  {...block.props} 
+                  theme={theme} 
+                />
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );
