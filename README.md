@@ -1,12 +1,11 @@
 <div align="center">
-  <!-- Replace with an actual GIF of the AI generating a website in real-time -->
-  <img src="./public/og-image.png" alt="AI Website Builder Banner" width="100%">
+  
 
   <h1>AI Website Builder 🤖🚀</h1>
 
   <p>An intelligent, Next.js-powered platform that automates the generation of responsive, modular website interfaces directly from natural language prompts.</p>
 
-  <h3>🟢 <a href="https://your-live-deployment-link.vercel.app">Live Deployment Available Here</a></h3>
+  <h3>🟢 <a href="https://ai-websitebuilder.vercel.app/">Live Deployment Available Here</a></h3>
 </div>
 
 <br/>
@@ -20,13 +19,14 @@
 </div>
 
 ---
-
+<!--
 ## 🖥️ Application Preview
 
 <div align="center">
-  <!-- Replace this source with your actual recorded GIF showing a prompt turning into UI -->
+  <!-- Replace this source with your actual recorded GIF showing a prompt turning into UI --
   <img src="./public/demo.gif" alt="AI Builder UI Demo" width="800">
 </div>
+-->
 
 ## 🚀 Overview
 
@@ -34,31 +34,31 @@ The AI Website Builder bridges the gap between natural language intent and funct
 
 ### ✨ Key Technical Features
 
-* **Dynamic Component Orchestration:** Utilizes a custom `componentMap.ts` to dynamically resolve and render modular React blocks (Hero, Features, Pricing, etc.) based on AI-generated JSON/code structures[cite: 11].
-* **Real-Time Code Parsing:** Engineered a custom `generateHtml.tsx` utility engine that securely parses and translates LLM output into sanitized, renderable React/HTML code[cite: 11].
-* **Next.js App Router API:** Employs Next.js serverless API routes (`app/api/generate/route.ts`) to securely handle AI prompt processing and stream responses back to the client[cite: 11].
-* **Modular UI Architecture:** Built with a scalable, Tailwind-styled component library (`components/blocks/`) that allows the AI to assemble complex pages like Lego bricks[cite: 11].
+* **Dynamic Component Orchestration:** Utilizes a custom `componentMap.ts` to dynamically resolve and render modular React blocks (Hero, Features, Pricing, etc.) based on AI-generated JSON/code structures.
+* **Real-Time Code Parsing:** Engineered a custom `generateHtml.tsx` utility engine that securely parses and translates LLM output into sanitized, renderable React/HTML code.
+* **Next.js App Router API:** Employs Next.js serverless API routes (`app/api/generate/route.ts`) to securely handle AI prompt processing and stream responses back to the client.
+* **Modular UI Architecture:** Built with a scalable, Tailwind-styled component library (`components/blocks/`) that allows the AI to assemble complex pages like Lego bricks.
 
 ## 📂 System Architecture
 
 ```text
 ai-builder/
 ├── app/
-│   ├── api/generate/         # Serverless API routes for LLM prompt processing[cite: 11]
-│   ├── layout.tsx            # Next.js root layout[cite: 11]
-│   └── page.tsx              # Main application interface[cite: 11]
+│   ├── api/generate/         # Serverless API routes for LLM prompt processing
+│   ├── layout.tsx            # Next.js root layout
+│   └── page.tsx              # Main application interface
 │
 ├── components/
-│   ├── blocks/               # Modular UI blocks (Hero, Navbar, Pricing, etc.)[cite: 11]
-│   ├── componentMap.ts       # Component registry for dynamic AI rendering[cite: 11]
-│   └── Skeleton.tsx          # Loading state UI components[cite: 11]
+│   ├── blocks/               # Modular UI blocks (Hero, Navbar, Pricing, etc.)
+│   ├── componentMap.ts       # Component registry for dynamic AI rendering
+│   └── Skeleton.tsx          # Loading state UI components
 │
 ├── utils/
-│   └── generateHtml.tsx      # Core parsing engine for translating LLM output[cite: 11]
+│   └── generateHtml.tsx      # Core parsing engine for translating LLM output
 │
-├── check-models.js           # Utility script for verifying API model availability[cite: 11]
-├── tailwind.config.ts        # Tailwind CSS configuration[cite: 11]
-└── tsconfig.json             # TypeScript configuration[cite: 11]
+├── check-models.js           # Utility script for verifying API model availability
+├── tailwind.config.ts        # Tailwind CSS configuration
+└── tsconfig.json             # TypeScript configuration
 ```
 
 ## 🛠 System Setup & Local Development
@@ -72,7 +72,7 @@ ai-builder/
 
 **1. Clone the repository:**
 ```bash
-git clone [https://github.com/antariksh19/ai-builder.git](https://github.com/antariksh19/ai-builder.git)
+git clone https://github.com/antariksh19/ai-builder.git
 cd ai-builder
 ```
 
@@ -86,7 +86,7 @@ Create a `.env.local` file in the root directory and securely add your API keys:
 ```env
 NEXT_PUBLIC_API_KEY=your_gemini_or_groq_api_key_here
 ```
-*(Run `node check-models.js` to verify your API connection and model availability prior to starting the server)[cite: 11].*
+*(Run `node check-models.js` to verify your API connection and model availability prior to starting the server).*
 
 **4. Run the development server:**
 ```bash
